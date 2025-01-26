@@ -44,7 +44,7 @@ Esta es una API para acortar URLs y redirigir a las URLs originales a partir de 
 3. Instala las dependencias necesarias:
 
    ```bash
-   pip install -r requirements.txt
+poetry install
    ```
 
 4. Crea la base de datos y la tabla `urls` en MySQL:
