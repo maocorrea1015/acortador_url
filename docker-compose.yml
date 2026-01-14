@@ -10,6 +10,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=password
       - DB_NAME=acortador
+      - BASE_URL=http://localhost:5000
 
   db:
     image: mysql:5.7

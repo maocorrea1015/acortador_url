@@ -99,6 +99,11 @@ Esta es una API para acortar URLs y redirigir a las URLs originales a partir de 
 
    Esto iniciará la aplicación Flask en `http://localhost:5000` y MySQL en `localhost:3306`.
 
+   Para producción, edita `docker-compose.yml` y agrega en environment de app:
+   ```
+   - BASE_URL=https://url.mao-tech.org
+   ```
+
 4. La base de datos se creará automáticamente con la tabla `urls`.
 
 ## Uso de la API

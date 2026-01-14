@@ -3,6 +3,7 @@ import pymysql
 from db import conectar_db
 import string
 import random
+import os
 
 app = Flask(__name__)
 
@@ -44,7 +45,7 @@ def shorten_url():
             connection.commit()
 
 
-        short_full_url = request.host_url + seudolink
+        short_full_url = os.getenv("BASE_URL", request.host_url) + seudolink
         return jsonify({
             "success": True,
             "short_url": short_full_url,
