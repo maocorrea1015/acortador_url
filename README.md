@@ -19,12 +19,15 @@ Esta es una API para acortar URLs y redirigir a las URLs originales a partir de 
 
 ## Requisitos
 
-- **Python 3.x**
+- **Python 3.12+**
 - **Flask** (Framework para la API web)
 - **PyMySQL** (Conexión a base de datos MySQL)
 - **MySQL o MariaDB** (Base de datos para almacenar las URLs)
+- **Docker** (Para ejecutar la aplicación en contenedores)
 
-## Instalación
+## Instalación y Ejecución
+
+### Opción 1: Ejecutar localmente
 
 1. Clona este repositorio a tu máquina local:
 
@@ -44,14 +47,14 @@ Esta es una API para acortar URLs y redirigir a las URLs originales a partir de 
 3. Instala las dependencias necesarias:
 
    ```bash
-   poetry install
+   pip install -e .
    ```
 
 4. Crea la base de datos y la tabla `urls` en MySQL:
 
    ```sql
-   CREATE DATABASE url_shortener;
-   USE url_shortener;
+   CREATE DATABASE acortador;
+   USE acortador;
 
    CREATE TABLE urls (
        id INT AUTO_INCREMENT PRIMARY KEY,
@@ -62,49 +65,64 @@ Esta es una API para acortar URLs y redirigir a las URLs originales a partir de 
    );
    ```
 
-5. Configura tu archivo `db.py` con la información de conexión a tu base de datos:
+5. Configura las variables de entorno en `db.py` o establece las variables de entorno:
 
-   ```python
-   import pymysql
-
-   def conectar_db():
-       return pymysql.connect(
-           host='localhost',
-           user='tu_usuario',
-           password='tu_contraseña',
-           db='url_shortener',
-           charset='utf8mb4',
-           cursorclass=pymysql.cursors.DictCursor
-       )
+   ```bash
+   export DB_HOST=localhost
+   export DB_USER=root
+   export DB_PASSWORD=tu_password
+   export DB_NAME=acortador
    ```
+
+6. Ejecuta la aplicación:
+
+   ```bash
+   python app.py
+   ```
+
+### Opción 2: Ejecutar con Docker
+
+1. Asegúrate de tener Docker y Docker Compose instalados.
+
+2. Clona el repositorio y navega al directorio:
+
+   ```bash
+   git clone <URL DEL REPOSITORIO>
+   cd <NOMBRE DEL REPOSITORIO>
+   ```
+
+3. Construye y ejecuta los contenedores:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+   Esto iniciará la aplicación Flask en `http://localhost:5000` y MySQL en `localhost:3306`.
+
+4. La base de datos se creará automáticamente con la tabla `urls`.
 
 ## Uso de la API
 
 ### 1. Generar una URL corta
 
-**Endpoint**: `POST /shorten`
+**Endpoint**: `GET /?url=<URL>`
 
-Este endpoint recibe una URL larga y devuelve un enlace corto.
+Este endpoint recibe una URL larga como parámetro de query y devuelve un enlace corto completo.
 
-- **URL de la solicitud**: `http://127.0.0.1:8080/shorten`
-- **Método**: `POST`
-- **Cuerpo de la solicitud (JSON)**:
+- **URL de la solicitud**: `http://127.0.0.1:5000/?url=https://www.example.com`
+- **Método**: `GET`
   
-  ```json
-  {
-    "url": "https://www.example.com"
-  }
-  ```
-
 - **Respuesta**:
   
   ```json
   {
     "success": true,
-    "short_url": "abc123",
+    "short_url": "http://127.0.0.1:5000/abc123",
     "original_url": "https://www.example.com"
   }
   ```
+
+Si no se proporciona el parámetro `url`, devuelve un mensaje de uso.
 
 ### 2. Redirigir usando una URL corta
 
@@ -112,7 +130,7 @@ Este endpoint recibe una URL larga y devuelve un enlace corto.
 
 Este endpoint recibe una URL corta y redirige al usuario a la URL original.
 
-- **URL de la solicitud**: `http://127.0.0.1:8080/<short_url>`
+- **URL de la solicitud**: `http://127.0.0.1:5000/<short_url>`
 - **Método**: `GET`
   
   Por ejemplo, si la URL corta generada es `abc123`, la URL sería:
@@ -136,7 +154,10 @@ Este endpoint recibe una URL corta y redirige al usuario a la URL original.
 .
 ├── app.py                # Contiene la lógica principal de la API
 ├── db.py                 # Contiene la función de conexión a la base de datos
-├── requirements.txt      # Listado de dependencias para instalar
+├── pyproject.toml        # Configuración del proyecto y dependencias
+├── Dockerfile            # Archivo para construir la imagen Docker de la app
+├── docker-compose.yml    # Configuración para ejecutar la app y la base de datos con Docker
+├── .dockerignore         # Archivos a ignorar en la construcción de Docker
 └── README.md             # Documentación del proyecto
 ```
 
