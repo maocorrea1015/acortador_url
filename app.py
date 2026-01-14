@@ -86,10 +86,6 @@ def redirect_url(short_url):
         if 'connection' in locals() and connection.open:
             connection.close()
 
-    finally:
-        if 'connection' in locals() and connection.open:
-            connection.close()
-
 
 
 
