@@ -56,7 +56,7 @@ def shorten_url():
 
     finally:
         if 'connection' in  locals() and connection.open:
-            connection.close
+            connection.close()
 
 
 @app.route('/<short_url>', methods=['GET'])
@@ -81,6 +81,10 @@ def redirect_url(short_url):
 
     except pymysql.MySQLError as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+    finally:
+        if 'connection' in locals() and connection.open:
+            connection.close()
 
     finally:
         if 'connection' in locals() and connection.open:
